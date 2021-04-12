@@ -1,0 +1,12 @@
+<button id="getExifBtn1">取得資料1</button>
+<button id="getExifBtn2">取得資料2</button>
+
+<%= file_field_tag('picture', id: "fileUploader") %>
+
+<%= image_tag("image1", id: "img1", width: "100px") %>
+<%= image_tag("image2", id: "img2", width: "100px") %>
+
+<span>我是資料 </span><span id="context"></span>
+<hr />
+<button id="addPointBtn">將座標打到地圖上</button>
+<div id="map" class="map"></div>
