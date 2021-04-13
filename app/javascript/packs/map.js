@@ -35,7 +35,8 @@ const addPointToFeature = (longitude, latitude, targetSource = pointSource) => {
 }
 
 // 抓出所有圖片的 data-longitude、data-latitude 打到地圖上
-const getImageLonLat = (elements) => {
+const getImageLonLat = () => {
+  const elements = document.querySelectorAll('img');
   elements.forEach((e) => {
     const { longitude, latitude} = e.dataset
     if (!(longitude && latitude))
@@ -46,8 +47,6 @@ const getImageLonLat = (elements) => {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 所有 image element
-  const AllImgElement = document.querySelectorAll('img');
 
   // 地圖顯示
   new Map({
@@ -61,5 +60,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 點擊按鈕加入 點 在地圖上
   const addPointBtn = document.getElementById("addPointBtn");
-  addPointBtn.addEventListener('click', () => getImageLonLat(AllImgElement), false)
+  addPointBtn.addEventListener('click', () => getImageLonLat(), false)
 });

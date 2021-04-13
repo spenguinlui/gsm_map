@@ -1,10 +1,13 @@
 <button id="getExifBtn1">取得資料1</button>
 <button id="getExifBtn2">取得資料2</button>
+<button id="getExifBtn3">取得資料3</button>
 
 <%= file_field_tag('picture', id: "fileUploader") %>
-
-<%= image_tag("image1", id: "img1", width: "100px") %>
-<%= image_tag("image2", id: "img2", width: "100px") %>
+<div id="imgCategory">
+  <%= image_tag("image1", id: "img1", class: "image100") %>
+  <%= image_tag("image2", id: "img2", class: "image100") %>
+  <%= image_tag("image3", id: "img3", class: "image100") %>
+</div>
 
 <span>我是資料 </span><span id="context"></span>
 <hr />
