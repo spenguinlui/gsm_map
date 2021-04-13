@@ -1,14 +1,14 @@
-<button id="getExifBtn1">取得資料1</button>
-<button id="getExifBtn2">取得資料2</button>
-<button id="getExifBtn3">取得資料3</button>
-
+<button id="getExifBtn1">取得資料1(有 exif + gps)</button>
+<button id="getExifBtn2">取得資料2(無 exif)</button>
+<button id="getExifBtn3">取得資料3(有exif 無 gps)</button>
 <%= file_field_tag('picture', id: "fileUploader") %>
+<hr />
 <div id="imgCategory">
   <%= image_tag("image1", id: "img1", class: "image100") %>
   <%= image_tag("image2", id: "img2", class: "image100") %>
   <%= image_tag("image3", id: "img3", class: "image100") %>
 </div>
-
+<hr />
 <span>我是資料 </span><span id="context"></span>
 <hr />
 <button id="addPointBtn">將座標打到地圖上</button>
