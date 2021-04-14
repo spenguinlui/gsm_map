@@ -17,7 +17,7 @@ import heic2any from "heic2any";
 // DMS 換算成 10進位 (舊版先留著)
 // const convertDMStoDec = (degree, minute, second) => degree + minute / 60 + second / (60 * 60);
 // 四捨五入至小數點 n 位數 (舊版先留著)
-// const roundToDecPoint = (point, number) => Math.round(number * Math.pow(10, point)) / Math.pow(10, point);
+const roundToDecPoint = (point, number) => Math.round(number * Math.pow(10, point)) / Math.pow(10, point);
 
 // 座標轉換: DMS 轉十進制 (舊版先留著)
 // const convertDMSToDD = ({degree, minute, second, direction}) => {
@@ -56,8 +56,7 @@ import heic2any from "heic2any";
 // }
 
 // 將經緯度寫入 DOM
-const setLatLonToElement = (data, element) => {
-  const { latitude, longitude } = data;
+const setLatLonToElement = (latitude, longitude, element) => {
   element.dataset.latitude = latitude;
   element.dataset.longitude = longitude;
 }
@@ -86,10 +85,13 @@ const createImgElement = (fileSrc, parentElement, display = 'show') => {
 // 取得 EXIF 資料並加工
 const getEXIFAndSetLatLon = (element, textInputElement) => {
   exifr.gps(element).then((res) => {
-    console.log(res)
-    setLatLonToElement(res, element);
-    textInputElement.innerHTML = `經緯度是： ${res.longitude} ${res.latitude}`;
-  }).catch(() => {
+    let { latitude, longitude } = res;
+    latitude = roundToDecPoint(6, latitude);
+    longitude = roundToDecPoint(6, longitude);
+    setLatLonToElement(latitude, longitude, element);
+    textInputElement.innerHTML = `經緯度是： ${longitude} ${latitude}`;
+  }).catch((e) => {
+    console.error(e)
     textInputElement.innerHTML = '此照片無座標';
   })
 };
@@ -110,24 +112,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fileUploader.addEventListener('change', (e) => {
     const element = e.target;
-    if (element.files && element.files[0]) {
+    const blob = element.files[0];
+
+    if (element.files && blob) {
       const reader = new FileReader();
       const heicReader = new FileReader();
 
       if (element.files[0].type == 'image/heic')
-        // heic 轉 jpg
+        // heic 轉 jpg ，因為 html 無法直接顯示 heic 圖
         (async () => {
-          const blob = element.files[0];
           const jpgFile = await heic2any({
             blob,
             toType: "image/jpeg",
             quality: 0.5
           });
-          heicReader.readAsDataURL(element.files[0]);
+          heicReader.readAsDataURL(blob);
           reader.readAsDataURL(jpgFile);
         })();
       else
-        reader.readAsDataURL(element.files[0]);
+        reader.readAsDataURL(blob);
 
       // 監聽讀取到檔案後的動作
       reader.onload = (e) => {
@@ -136,9 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
         getEXIFAndSetLatLon(newImg, contextElement);
       };
       heicReader.onload = (e) => {
-        // 也新增一個元素掛上，但不顯示(因為 heic 轉 jpg 後 exif 的 gps 會遺失)
-        const newImg = createImgElement(e.target.result, imgCategory, 'none');
-        getEXIFAndSetLatLon(newImg, contextElement);
+        // 因為 heic 轉 jpg 後 exif 的 gps 會遺失，所以要用本來的 heic 去抓經緯度，在替換回 jpg
+        const imgElementList = imgCategory.getElementsByTagName('img');
+        const lastImgElement = imgElementList[imgElementList.length - 1];
+        const originSrc = lastImgElement.src;
+        lastImgElement.src = e.target.result;
+        getEXIFAndSetLatLon(lastImgElement, contextElement);
+        lastImgElement.src = originSrc;
       }
     }
   });

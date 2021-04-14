@@ -18,7 +18,7 @@ const getCircleStyle = (radius, color) => {
 }
 
 // 地圖視圖控制
-const MapView = new View({ center: fromLonLat([120.41, 25.82]), zoom: 6 });
+const MapView = new View({ center: fromLonLat([120.41, 25.82]), zoom: 8 });
 
 // 地圖底圖層
 const MapBackGroundLayer = new TileLayer({ source: new OSMSource() });
